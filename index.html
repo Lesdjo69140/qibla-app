@@ -611,10 +611,23 @@
     let userLat      = 48.8566;  // Paris par défaut
     let userLng      = 2.3522;
     let qiblaAngle   = 0;        // angle vers la Mecque depuis le Nord géographique (0-360)
-    let heading      = null;     // cap du téléphone en degrés (0=Nord, sens horaire)
+    let heading      = null;     // cap lissé du téléphone en degrés (0=Nord, sens horaire)
+    let rawHeading   = null;     // cap brut
     let gpsOk        = false;
     let orientOk     = false;
     let isIOS        = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+    // Lissage exponentiel : 0.1 = très lisse (lent), 0.3 = équilibre, 0.8 = réactif
+    const SMOOTH = 0.12;
+
+    function smoothAngle(current, target) {
+        if (current === null) return target;
+        // Gère le passage 359° → 0°
+        let diff = target - current;
+        if (diff > 180)  diff -= 360;
+        if (diff < -180) diff += 360;
+        return (current + SMOOTH * diff + 360) % 360;
+    }
 
     // ── Calcul Qibla ─────────────────────────────────────────
     function calcQibla(lat, lng) {
@@ -699,8 +712,9 @@
         }
 
         if (h !== null) {
-            heading  = h;
-            orientOk = true;
+            rawHeading = h;
+            heading    = smoothAngle(heading, h);
+            orientOk   = true;
             orientationLed.className = 'status-led green';
         }
     }
