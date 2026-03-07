@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Guide Spirituel - Qibla Précise</title>
+    <title>Guide Spirituel - Qibla & Prière</title>
     <style>
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI','Amiri','Traditional Arabic',system-ui,sans-serif; }
 
@@ -100,7 +100,26 @@
 
         .alert-banner { background:rgba(244,67,54,.2); border:1px solid #f44336; border-radius:16px; color:#ffb3ae; font-size:.85rem; padding:10px 14px; margin-bottom:10px; text-align:center; }
 
-        /* ── Sourates ── */
+        /* Prière Tab */
+        .prayer-container { background:rgba(10,20,15,.6); border-radius:36px; padding:20px; backdrop-filter:blur(8px); border:1px solid rgba(212,175,55,.3); min-height:420px; }
+        .prayer-card { background:rgba(255,255,255,.05); border-radius:32px; padding:20px; border:1px solid #d4af3740; }
+        .prayer-title { text-align:center; font-size:2rem; color:#f9e076; font-family:'Amiri',serif; margin-bottom:20px; }
+        .city-mosque { background:rgba(0,0,0,.3); border-radius:30px; padding:15px; margin:20px 0; border-left:5px solid #d4af37; }
+        .city-name-badge { color:#ecd9b4; font-size:1.3rem; margin-bottom:8px; }
+        .mosque-name { color:#f9e076; font-size:1.1rem; font-weight:bold; }
+        .prayer-btn {
+            background:linear-gradient(135deg,#d4af37,#b49450);
+            border:none; border-radius:60px; color:#1a3f2a;
+            font-weight:bold; font-size:1.3rem; padding:18px 20px;
+            width:100%; cursor:pointer; transition:all .3s;
+            display:flex; align-items:center; justify-content:center; gap:12px;
+            border:2px solid #f9e076; box-shadow:0 10px 20px rgba(0,0,0,.4);
+            margin-top:25px;
+        }
+        .prayer-btn:hover { transform:scale(1.02); background:linear-gradient(135deg,#e6c257,#a8873a); }
+        .prayer-btn i { font-size:1.8rem; }
+        .prayer-info { text-align:center; color:#b9aa8a; margin-top:15px; font-size:.9rem; }
+
         .surah-container { background:rgba(15,25,20,.7); border-radius:36px; padding:16px 8px; backdrop-filter:blur(8px); border:1px solid rgba(212,175,55,.3); }
         .surah-list { display:flex; flex-direction:column; gap:16px; max-height:520px; overflow-y:auto; padding:4px 8px; scrollbar-width:thin; scrollbar-color:#d4af37 #1e3a2a; }
         .surah-card { background:rgba(255,255,255,.05); border-radius:28px; padding:16px 14px; border:1px solid rgba(212,175,55,.2); }
@@ -126,6 +145,7 @@
     <div class="tabs">
         <button class="tab-btn active" id="tabQiblaBtn">🕋 Qibla</button>
         <button class="tab-btn" id="tabSurahBtn">📖 Sourates</button>
+        <button class="tab-btn" id="tabPrayerBtn">🕌 Prière</button>
     </div>
 
     <!-- QIBLA -->
@@ -179,7 +199,6 @@
     <div id="surahContent" class="tab-content">
         <div class="surah-container">
             <div class="surah-list">
-
                 <!-- Al-Fatiha -->
                 <div class="surah-card">
                     <div class="surah-header">
@@ -306,7 +325,30 @@
                         Allah ! Point de divinité à part Lui, le Vivant, Celui qui subsiste par Lui-même. Ni somnolence ni sommeil ne Le saisissent. À Lui appartient tout ce qui est dans les cieux et sur la terre. Qui peut intercéder auprès de Lui sans Sa permission ? Il sait ce qui est devant eux et ce qui est derrière eux, alors qu'ils n'embrassent de Sa science que ce qu'Il veut. Son Trône déborde les cieux et la terre, dont la garde ne Lui coûte aucune peine. Et Il est le Très Haut, le Très Grand.
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- PRIÈRE -->
+    <div id="prayerContent" class="tab-content">
+        <div class="prayer-container">
+            <div class="prayer-card">
+                <div class="prayer-title">🕌 Horaires de prière</div>
+                
+                <div class="city-mosque">
+                    <div class="city-name-badge" id="prayerCityName">📍 Détection de votre ville...</div>
+                    <div class="mosque-name" id="mosqueName">Mosquée de La Mecque (Masjid al-Haram)</div>
+                </div>
+
+                <button class="prayer-btn" id="prayerRedirectBtn">
+                    <span>🕋</span>
+                    <span id="btnText">Voir les horaires à La Mecque</span>
+                    <span>⏰</span>
+                </button>
+
+                <div class="prayer-info">
+                    <span id="prayerInfo">Cliquez pour accéder au site de la mosquée principale de votre ville</span>
+                </div>
             </div>
         </div>
     </div>
@@ -327,21 +369,14 @@
         document.getElementById('stars').appendChild(s);
     }
 
-    // ── Onglets
-    document.getElementById('tabQiblaBtn').addEventListener('click', () => {
-        document.getElementById('tabQiblaBtn').classList.add('active');
-        document.getElementById('tabSurahBtn').classList.remove('active');
-        document.getElementById('qiblaContent').classList.add('active-content');
-        document.getElementById('surahContent').classList.remove('active-content');
-    });
-    document.getElementById('tabSurahBtn').addEventListener('click', () => {
-        document.getElementById('tabSurahBtn').classList.add('active');
-        document.getElementById('tabQiblaBtn').classList.remove('active');
-        document.getElementById('surahContent').classList.add('active-content');
-        document.getElementById('qiblaContent').classList.remove('active-content');
-    });
+    // ── Références DOM
+    const tabQiblaBtn = document.getElementById('tabQiblaBtn');
+    const tabSurahBtn = document.getElementById('tabSurahBtn');
+    const tabPrayerBtn = document.getElementById('tabPrayerBtn');
+    const qiblaContent = document.getElementById('qiblaContent');
+    const surahContent = document.getElementById('surahContent');
+    const prayerContent = document.getElementById('prayerContent');
 
-    // ── Refs DOM
     const compassCircle    = document.getElementById('compassCircle');
     const needleContainer  = document.getElementById('needleContainer');
     const directionDeg     = document.getElementById('directionDeg');
@@ -357,19 +392,51 @@
     const alertBanner      = document.getElementById('alertBanner');
     const permBtn          = document.getElementById('permBtn');
 
+    // Éléments pour l'onglet Prière
+    const prayerCityName = document.getElementById('prayerCityName');
+    const mosqueName = document.getElementById('mosqueName');
+    const prayerRedirectBtn = document.getElementById('prayerRedirectBtn');
+    const btnText = document.getElementById('btnText');
+    const prayerInfo = document.getElementById('prayerInfo');
+
     const MECQUE = { lat: 21.4225, lng: 39.8262 };
 
     let userLat    = 48.8566;
     let userLng    = 2.3522;
+    let userCity = "Paris";
     let qiblaAngle = 0;
     let heading    = null;
     let gpsOk      = false;
     let orientOk   = false;
     let isIOS      = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-    // ── Lissage très fort
-    // SMOOTH = 0.04 → correction de 4% par frame (≈60fps), très stable
-    // MIN_MOVE = 2.5° → zone morte, ignore les micro-tremblements
+    // Base de données des mosquées par ville
+    const mosqueDatabase = {
+        "paris": { name: "Mosquée de Paris", url: "https://www.mosqueedeparis.net/" },
+        "lyon": { name: "Mosquée de Lyon", url: "https://www.grandemosqueedelyon.fr/" },
+        "marseille": { name: "Mosquée de Marseille", url: "https://www.mosqueedemarseille.org/" },
+        "lille": { name: "Mosquée de Lille", url: "https://mosqueedelille.com/" },
+        "strasbourg": { name: "Mosquée de Strasbourg", url: "https://lagrandemosqueedestrasbourg.fr/" },
+        "bordeaux": { name: "Mosquée de Bordeaux", url: "https://www.mosqueebordeaux.fr/" },
+        "toulouse": { name: "Mosquée de Toulouse", url: "https://mosqueedetoulouse.com/" },
+        "nice": { name: "Mosquée de Nice", url: "https://www.mosqueedefrance.fr/" },
+        "nantes": { name: "Mosquée de Nantes", url: "https://mosqueedenantes.com/" },
+        "rouen": { name: "Mosquée de Rouen", url: "https://mosquee-rouen.fr/" },
+        "la mecque": { name: "Mosquée de La Mecque (Masjid al-Haram)", url: "https://www.haramain.info/fr/makkah" }
+    };
+
+    // URLs de secours par pays (simplifié)
+    const countryUrls = {
+        "france": "https://www.mosqueedeparis.net/",
+        "maroc": "https://www.habous.gov.ma/",
+        "algerie": "https://www.marhba.com/",
+        "tunisie": "https://www.diwanfm.net/",
+        "belgique": "https://www.mosqueedebruxelles.be/",
+        "suisse": "https://www.mosqueedegeneve.ch/",
+        "canada": "https://www.mosqueequebec.org/"
+    };
+
+    // ── Lissage
     const SMOOTH   = 0.04;
     const MIN_MOVE = 2.5;
 
@@ -392,7 +459,45 @@
         return ((Math.atan2(y, x) * 180 / Math.PI) + 360) % 360;
     }
 
-    // ── Boucle RAF — lissage continu à chaque frame
+    // ── Mise à jour des infos mosquée
+    function updateMosqueInfo(city, country = "france") {
+        if (!city) city = "La Mecque";
+        
+        const cityLower = city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        
+        let mosque = mosqueDatabase[cityLower];
+        
+        if (mosque) {
+            mosqueName.textContent = mosque.name;
+            prayerRedirectBtn.onclick = () => window.open(mosque.url, '_blank');
+            btnText.textContent = `Horaires à ${city}`;
+            prayerInfo.textContent = `Cliquez pour accéder au site de la ${mosque.name}`;
+        } else {
+            // Recherche approximative
+            let found = false;
+            for (let key in mosqueDatabase) {
+                if (cityLower.includes(key) || key.includes(cityLower)) {
+                    mosqueName.textContent = mosqueDatabase[key].name;
+                    prayerRedirectBtn.onclick = () => window.open(mosqueDatabase[key].url, '_blank');
+                    btnText.textContent = `Horaires à ${city}`;
+                    prayerInfo.textContent = `Cliquez pour accéder au site de la ${mosqueDatabase[key].name}`;
+                    found = true;
+                    break;
+                }
+            }
+            
+            if (!found) {
+                // Mosquée par défaut selon le pays
+                const countryUrl = countryUrls[country.toLowerCase()] || "https://www.haramain.info/fr/makkah";
+                mosqueName.textContent = `Mosquée principale de ${city}`;
+                prayerRedirectBtn.onclick = () => window.open(countryUrl, '_blank');
+                btnText.textContent = `Horaires de prière`;
+                prayerInfo.textContent = `Cliquez pour voir les horaires (ville: ${city})`;
+            }
+        }
+    }
+
+    // ── Boucle RAF
     function render() {
         if (orientOk && heading !== null) {
             compassCircle.style.transform   = `rotate(${-heading}deg)`;
@@ -467,29 +572,90 @@
         gpsOk = true;
         gpsLed.className = 'status-led green';
         gpsAccuracy.textContent = Math.round(pos.coords.accuracy);
+        
         fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${userLat}&longitude=${userLng}&localityLanguage=fr`)
             .then(r => r.json())
-            .then(d => { cityName.textContent = '📍 ' + (d.city || d.locality || d.principalSubdivision || 'Position actuelle'); })
-            .catch(() => { cityName.textContent = `📍 ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`; });
+            .then(d => {
+                const city = d.city || d.locality || d.principalSubdivision || 'Position actuelle';
+                const country = d.countryName || 'france';
+                userCity = city;
+                cityName.textContent = '📍 ' + city;
+                prayerCityName.textContent = `📍 ${city}`;
+                
+                // Mise à jour des infos mosquée pour l'onglet Prière
+                updateMosqueInfo(city, country);
+            })
+            .catch(() => { 
+                cityName.textContent = `📍 ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+                prayerCityName.textContent = `📍 ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+                updateMosqueInfo("La Mecque");
+            });
     }
+    
     function onGPSError() {
         gpsLed.className = 'status-led yellow';
         qiblaAngle = calcQibla(userLat, userLng);
         cityName.textContent = '📍 Paris (par défaut)';
+        prayerCityName.textContent = '📍 Paris (par défaut)';
         gpsAccuracy.textContent = '---';
+        updateMosqueInfo("Paris");
     }
+
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(onGPS, onGPSError, { enableHighAccuracy:true, timeout:10000 });
         navigator.geolocation.watchPosition(onGPS, onGPSError, { enableHighAccuracy:true, maximumAge:0, timeout:5000 });
     } else {
         gpsLed.className = 'status-led red'; gpsAccuracy.textContent = 'N/A';
-        cityName.textContent = '📍 GPS non supporté'; qiblaAngle = calcQibla(userLat, userLng);
+        cityName.textContent = '📍 GPS non supporté'; 
+        prayerCityName.textContent = '📍 GPS non supporté';
+        qiblaAngle = calcQibla(userLat, userLng);
+        updateMosqueInfo("Paris");
     }
-    setTimeout(() => { if (!gpsOk) { gpsLed.className='status-led yellow'; qiblaAngle=calcQibla(userLat,userLng); } }, 5000);
+    
+    setTimeout(() => { 
+        if (!gpsOk) { 
+            gpsLed.className='status-led yellow'; 
+            qiblaAngle=calcQibla(userLat,userLng); 
+            prayerCityName.textContent = '📍 Paris (par défaut)';
+            updateMosqueInfo("Paris");
+        } 
+    }, 5000);
 
     function showAlert(msg) { alertBanner.textContent = '⚠️ ' + msg; alertBanner.style.display = 'block'; }
 
     qiblaAngle = calcQibla(userLat, userLng);
+
+    // ── Gestion des onglets
+    tabQiblaBtn.addEventListener('click', () => {
+        tabQiblaBtn.classList.add('active');
+        tabSurahBtn.classList.remove('active');
+        tabPrayerBtn.classList.remove('active');
+        qiblaContent.classList.add('active-content');
+        surahContent.classList.remove('active-content');
+        prayerContent.classList.remove('active-content');
+    });
+    
+    tabSurahBtn.addEventListener('click', () => {
+        tabSurahBtn.classList.add('active');
+        tabQiblaBtn.classList.remove('active');
+        tabPrayerBtn.classList.remove('active');
+        surahContent.classList.add('active-content');
+        qiblaContent.classList.remove('active-content');
+        prayerContent.classList.remove('active-content');
+    });
+    
+    tabPrayerBtn.addEventListener('click', () => {
+        tabPrayerBtn.classList.add('active');
+        tabQiblaBtn.classList.remove('active');
+        tabSurahBtn.classList.remove('active');
+        prayerContent.classList.add('active-content');
+        qiblaContent.classList.remove('active-content');
+        surahContent.classList.remove('active-content');
+    });
+
+    // Redirection par défaut pour l'onglet Prière (avant GPS)
+    updateMosqueInfo("Paris");
+    
     render();
 
 })();
