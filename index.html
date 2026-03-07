@@ -337,17 +337,17 @@
                 
                 <div class="city-mosque">
                     <div class="city-name-badge" id="prayerCityName">📍 Détection de votre ville...</div>
-                    <div class="mosque-name" id="mosqueName">Mosquée de La Mecque (Masjid al-Haram)</div>
+                    <div class="mosque-name" id="mosqueName">Mosquée de Rillieux-la-Pape</div>
                 </div>
 
                 <button class="prayer-btn" id="prayerRedirectBtn">
                     <span>🕋</span>
-                    <span id="btnText">Voir les horaires à La Mecque</span>
+                    <span id="btnText">Voir les horaires à Rillieux-la-Pape</span>
                     <span>⏰</span>
                 </button>
 
                 <div class="prayer-info">
-                    <span id="prayerInfo">Cliquez pour accéder au site de la mosquée principale de votre ville</span>
+                    <span id="prayerInfo">Cliquez pour accéder aux horaires de prière de votre mosquée</span>
                 </div>
             </div>
         </div>
@@ -410,30 +410,106 @@
     let orientOk   = false;
     let isIOS      = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
-    // Base de données des mosquées par ville
+    // Base de données complète des mosquées par ville
     const mosqueDatabase = {
+        // Paris et région parisienne
         "paris": { name: "Mosquée de Paris", url: "https://www.mosqueedeparis.net/" },
+        "paris 18e": { name: "Mosquée de Paris 18e", url: "https://www.mosqueedeparis.net/" },
+        "paris 19e": { name: "Mosquée de Paris 19e", url: "https://www.mosqueedeparis.net/" },
+        "saint-denis": { name: "Mosquée de Saint-Denis", url: "https://www.mosqueesaintdenis.com/" },
+        "aubervilliers": { name: "Mosquée d'Aubervilliers", url: "https://www.mosqueeaubervilliers.fr/" },
+        "la courneuve": { name: "Mosquée de La Courneuve", url: "https://www.mosquee-courneuve.fr/" },
+        "stains": { name: "Mosquée de Stains", url: "https://www.mosqueestains.fr/" },
+        
+        // Rhône-Alpes / Lyon
+        "rillieux": { name: "Mosquée de Rillieux-la-Pape", url: "https://mawaqit.net/fr/msjd-lslm-rillieux-la-pape-69140-france" },
+        "rillieux-la-pape": { name: "Mosquée de Rillieux-la-Pape", url: "https://mawaqit.net/fr/msjd-lslm-rillieux-la-pape-69140-france" },
         "lyon": { name: "Mosquée de Lyon", url: "https://www.grandemosqueedelyon.fr/" },
+        "lyon 3e": { name: "Grande Mosquée de Lyon", url: "https://www.grandemosqueedelyon.fr/" },
+        "lyon 8e": { name: "Grande Mosquée de Lyon", url: "https://www.grandemosqueedelyon.fr/" },
+        "villeurbanne": { name: "Mosquée de Villeurbanne", url: "https://www.mosquee-villeurbanne.org/" },
+        "vaulx-en-velin": { name: "Mosquée de Vaulx-en-Velin", url: "https://www.mosquee-vaulxvelin.fr/" },
+        "venissieux": { name: "Mosquée de Vénissieux", url: "https://www.mosquee-venissieux.fr/" },
+        "saint-etienne": { name: "Grande Mosquée de Saint-Étienne", url: "https://www.mosqueesaintetienne.fr/" },
+        "grenoble": { name: "Mosquée de Grenoble", url: "https://www.mosqueedegrenoble.fr/" },
+        
+        // Sud de la France
         "marseille": { name: "Mosquée de Marseille", url: "https://www.mosqueedemarseille.org/" },
+        "marseille 15e": { name: "Grande Mosquée de Marseille", url: "https://www.mosqueedemarseille.org/" },
+        "nice": { name: "Mosquée de Nice", url: "https://www.mosqueedenice.com/" },
+        "toulon": { name: "Mosquée de Toulon", url: "https://www.mosqueedetoulon.com/" },
+        "aix-en-provence": { name: "Mosquée d'Aix-en-Provence", url: "https://www.mosqueeaix.fr/" },
+        "avignon": { name: "Mosquée d'Avignon", url: "https://www.mosquee-avignon.fr/" },
+        "montpellier": { name: "Mosquée de Montpellier", url: "https://www.mosqueedemontpellier.fr/" },
+        "nimes": { name: "Mosquée de Nîmes", url: "https://www.mosqueedenimes.fr/" },
+        "perpignan": { name: "Mosquée de Perpignan", url: "https://www.mosqueeperpignan.fr/" },
+        
+        // Nord de la France
         "lille": { name: "Mosquée de Lille", url: "https://mosqueedelille.com/" },
-        "strasbourg": { name: "Mosquée de Strasbourg", url: "https://lagrandemosqueedestrasbourg.fr/" },
-        "bordeaux": { name: "Mosquée de Bordeaux", url: "https://www.mosqueebordeaux.fr/" },
-        "toulouse": { name: "Mosquée de Toulouse", url: "https://mosqueedetoulouse.com/" },
-        "nice": { name: "Mosquée de Nice", url: "https://www.mosqueedefrance.fr/" },
+        "lille-sud": { name: "Mosquée de Lille-Sud", url: "https://mosqueedelillesud.fr/" },
+        "roubaix": { name: "Mosquée de Roubaix", url: "https://www.mosquee-roubaix.fr/" },
+        "tourcoing": { name: "Mosquée de Tourcoing", url: "https://www.mosquee-tourcoing.fr/" },
+        "villeneuve-d'ascq": { name: "Mosquée de Villeneuve-d'Ascq", url: "https://www.mosquee-vda.fr/" },
+        
+        // Est de la France
+        "strasbourg": { name: "Grande Mosquée de Strasbourg", url: "https://lagrandemosqueedestrasbourg.fr/" },
+        "mulhouse": { name: "Mosquée de Mulhouse", url: "https://www.mosquee-mulhouse.fr/" },
+        "colmar": { name: "Mosquée de Colmar", url: "https://www.mosquee-colmar.fr/" },
+        "metz": { name: "Mosquée de Metz", url: "https://www.mosquee-metz.fr/" },
+        "nancy": { name: "Mosquée de Nancy", url: "https://www.mosquee-nancy.fr/" },
+        
+        // Ouest de la France
         "nantes": { name: "Mosquée de Nantes", url: "https://mosqueedenantes.com/" },
+        "rennes": { name: "Mosquée de Rennes", url: "https://www.mosqueederennes.fr/" },
+        "angers": { name: "Mosquée d'Angers", url: "https://www.mosquee-angers.fr/" },
+        "le mans": { name: "Mosquée du Mans", url: "https://www.mosqueelemans.fr/" },
+        "tours": { name: "Mosquée de Tours", url: "https://www.mosqueedetours.fr/" },
+        "poitiers": { name: "Mosquée de Poitiers", url: "https://www.mosquee-poitiers.fr/" },
+        "bordeaux": { name: "Mosquée de Bordeaux", url: "https://www.mosqueebordeaux.fr/" },
+        
+        // Centre de la France
+        "orleans": { name: "Mosquée d'Orléans", url: "https://www.mosquee-orleans.fr/" },
+        "toulouse": { name: "Mosquée de Toulouse", url: "https://mosqueedetoulouse.com/" },
+        "limoges": { name: "Mosquée de Limoges", url: "https://www.mosquee-limoges.fr/" },
+        "clermont-ferrand": { name: "Mosquée de Clermont-Ferrand", url: "https://www.mosquee-clermont.fr/" },
+        
+        // Normandie
         "rouen": { name: "Mosquée de Rouen", url: "https://mosquee-rouen.fr/" },
-        "la mecque": { name: "Mosquée de La Mecque (Masjid al-Haram)", url: "https://www.haramain.info/fr/makkah" }
-    };
-
-    // URLs de secours par pays (simplifié)
-    const countryUrls = {
-        "france": "https://www.mosqueedeparis.net/",
-        "maroc": "https://www.habous.gov.ma/",
-        "algerie": "https://www.marhba.com/",
-        "tunisie": "https://www.diwanfm.net/",
-        "belgique": "https://www.mosqueedebruxelles.be/",
-        "suisse": "https://www.mosqueedegeneve.ch/",
-        "canada": "https://www.mosqueequebec.org/"
+        "le havre": { name: "Mosquée du Havre", url: "https://www.mosquee-lehavre.fr/" },
+        "caen": { name: "Mosquée de Caen", url: "https://www.mosquee-caen.fr/" },
+        
+        // Belgique
+        "bruxelles": { name: "Mosquée de Bruxelles", url: "https://www.mosqueedebruxelles.be/" },
+        "liege": { name: "Mosquée de Liège", url: "https://www.mosquee-liege.be/" },
+        "charleroi": { name: "Mosquée de Charleroi", url: "https://www.mosquee-charleroi.be/" },
+        
+        // Suisse
+        "geneve": { name: "Mosquée de Genève", url: "https://www.mosqueedegeneve.ch/" },
+        "lausanne": { name: "Mosquée de Lausanne", url: "https://www.mosquee-lausanne.ch/" },
+        "zurich": { name: "Mosquée de Zurich", url: "https://www.mosquee-zurich.ch/" },
+        
+        // Maroc
+        "casablanca": { name: "Mosquée Hassan II", url: "https://www.mosquee-hassan2.com/" },
+        "rabat": { name: "Grande Mosquée de Rabat", url: "https://www.habous.gov.ma/" },
+        "marrakech": { name: "Mosquée Koutoubia", url: "https://www.habous.gov.ma/" },
+        
+        // Algérie
+        "alger": { name: "Grande Mosquée d'Alger", url: "https://www.marhba.com/" },
+        "oran": { name: "Mosquée d'Oran", url: "https://www.marhba.com/" },
+        
+        // Tunisie
+        "tunis": { name: "Grande Mosquée de Tunis", url: "https://www.diwanfm.net/" },
+        "sousse": { name: "Mosquée de Sousse", url: "https://www.diwanfm.net/" },
+        
+        // Turquie
+        "istanbul": { name: "Sainte-Sophie", url: "https://www.hurriyetdailynews.com/" },
+        
+        // Canada
+        "montreal": { name: "Mosquée de Montréal", url: "https://www.mosqueequebec.org/" },
+        "quebec": { name: "Mosquée de Québec", url: "https://www.mosqueequebec.org/" },
+        
+        // Défaut
+        "default": { name: "Mosquée de votre ville", url: "https://www.mawaqit.net/fr" }
     };
 
     // ── Lissage
@@ -460,40 +536,58 @@
     }
 
     // ── Mise à jour des infos mosquée
-    function updateMosqueInfo(city, country = "france") {
-        if (!city) city = "La Mecque";
+    function updateMosqueInfo(city) {
+        if (!city) city = "Paris";
         
-        const cityLower = city.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        const cityLower = city.toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .replace(/-/g, " ")
+            .trim();
         
+        console.log("Recherche pour la ville:", cityLower);
+        
+        // Recherche exacte
         let mosque = mosqueDatabase[cityLower];
+        
+        // Recherche par mot-clé
+        if (!mosque) {
+            const cityParts = cityLower.split(" ");
+            for (let part of cityParts) {
+                if (part.length > 3) {
+                    for (let key in mosqueDatabase) {
+                        if (key.includes(part) || part.includes(key)) {
+                            mosque = mosqueDatabase[key];
+                            break;
+                        }
+                    }
+                }
+                if (mosque) break;
+            }
+        }
+        
+        // Si toujours pas trouvé, recherche plus large
+        if (!mosque) {
+            for (let key in mosqueDatabase) {
+                if (cityLower.includes(key) || key.includes(cityLower)) {
+                    mosque = mosqueDatabase[key];
+                    break;
+                }
+            }
+        }
         
         if (mosque) {
             mosqueName.textContent = mosque.name;
             prayerRedirectBtn.onclick = () => window.open(mosque.url, '_blank');
             btnText.textContent = `Horaires à ${city}`;
-            prayerInfo.textContent = `Cliquez pour accéder au site de la ${mosque.name}`;
+            prayerInfo.textContent = `Cliquez pour accéder aux horaires de la ${mosque.name}`;
         } else {
-            // Recherche approximative
-            let found = false;
-            for (let key in mosqueDatabase) {
-                if (cityLower.includes(key) || key.includes(cityLower)) {
-                    mosqueName.textContent = mosqueDatabase[key].name;
-                    prayerRedirectBtn.onclick = () => window.open(mosqueDatabase[key].url, '_blank');
-                    btnText.textContent = `Horaires à ${city}`;
-                    prayerInfo.textContent = `Cliquez pour accéder au site de la ${mosqueDatabase[key].name}`;
-                    found = true;
-                    break;
-                }
-            }
-            
-            if (!found) {
-                // Mosquée par défaut selon le pays
-                const countryUrl = countryUrls[country.toLowerCase()] || "https://www.haramain.info/fr/makkah";
-                mosqueName.textContent = `Mosquée principale de ${city}`;
-                prayerRedirectBtn.onclick = () => window.open(countryUrl, '_blank');
-                btnText.textContent = `Horaires de prière`;
-                prayerInfo.textContent = `Cliquez pour voir les horaires (ville: ${city})`;
-            }
+            // URL par défaut Mawaqit avec le nom de la ville
+            const defaultUrl = `https://mawaqit.net/fr/recherche?q=${encodeURIComponent(city)}`;
+            mosqueName.textContent = `Mosquée de ${city}`;
+            prayerRedirectBtn.onclick = () => window.open(defaultUrl, '_blank');
+            btnText.textContent = `Horaires à ${city}`;
+            prayerInfo.textContent = `Recherche des horaires pour ${city} sur Mawaqit`;
         }
     }
 
@@ -577,28 +671,27 @@
             .then(r => r.json())
             .then(d => {
                 const city = d.city || d.locality || d.principalSubdivision || 'Position actuelle';
-                const country = d.countryName || 'france';
                 userCity = city;
                 cityName.textContent = '📍 ' + city;
                 prayerCityName.textContent = `📍 ${city}`;
                 
                 // Mise à jour des infos mosquée pour l'onglet Prière
-                updateMosqueInfo(city, country);
+                updateMosqueInfo(city);
             })
             .catch(() => { 
                 cityName.textContent = `📍 ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
                 prayerCityName.textContent = `📍 ${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
-                updateMosqueInfo("La Mecque");
+                updateMosqueInfo("Rillieux-la-Pape");
             });
     }
     
     function onGPSError() {
         gpsLed.className = 'status-led yellow';
         qiblaAngle = calcQibla(userLat, userLng);
-        cityName.textContent = '📍 Paris (par défaut)';
-        prayerCityName.textContent = '📍 Paris (par défaut)';
+        cityName.textContent = '📍 Rillieux-la-Pape (par défaut)';
+        prayerCityName.textContent = '📍 Rillieux-la-Pape';
         gpsAccuracy.textContent = '---';
-        updateMosqueInfo("Paris");
+        updateMosqueInfo("Rillieux-la-Pape");
     }
 
     if (navigator.geolocation) {
@@ -607,17 +700,17 @@
     } else {
         gpsLed.className = 'status-led red'; gpsAccuracy.textContent = 'N/A';
         cityName.textContent = '📍 GPS non supporté'; 
-        prayerCityName.textContent = '📍 GPS non supporté';
+        prayerCityName.textContent = '📍 Rillieux-la-Pape';
         qiblaAngle = calcQibla(userLat, userLng);
-        updateMosqueInfo("Paris");
+        updateMosqueInfo("Rillieux-la-Pape");
     }
     
     setTimeout(() => { 
         if (!gpsOk) { 
             gpsLed.className='status-led yellow'; 
             qiblaAngle=calcQibla(userLat,userLng); 
-            prayerCityName.textContent = '📍 Paris (par défaut)';
-            updateMosqueInfo("Paris");
+            prayerCityName.textContent = '📍 Rillieux-la-Pape';
+            updateMosqueInfo("Rillieux-la-Pape");
         } 
     }, 5000);
 
@@ -653,8 +746,8 @@
         surahContent.classList.remove('active-content');
     });
 
-    // Redirection par défaut pour l'onglet Prière (avant GPS)
-    updateMosqueInfo("Paris");
+    // Initialisation par défaut
+    updateMosqueInfo("Rillieux-la-Pape");
     
     render();
 
